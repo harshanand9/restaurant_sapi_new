@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xml-module="http://www.mulesoft.org/schema/mule/xml-module" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/xml-module http://www.mulesoft.org/schema/mule/xml-module/current/mule-xml-module.xsd">
+	<flow name="putRestaurantByIdFlow" doc:id="f785a192-c761-456f-a72d-9d802c3762ac" >
+		<db:update doc:name="Update" doc:id="a5727c82-7e1a-44f4-aa10-3d16a4574b43" config-ref="Database_Config1">
+			<db:sql ><![CDATA[UPDATE `swiggy-restaurantdb`.`restaurant` SET `name` = :name, `house_number` = :houseNumber, `street` = :street, `city` = :city, `pincode` = :pincode WHERE (`restaurant_id` = :restaurantId);]]></db:sql>
+			<db:input-parameters ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	restaurantId: payload.restaurant_id,
+	name: payload.name,
+	address: {
+		pincode: payload.pincode,
+		city: payload.city,
+		street: payload.street,
+		houseNumber: payload.house_number
+	}
+	
+}]]]></db:input-parameters>
+		</db:update>
+	</flow>
+</mule>

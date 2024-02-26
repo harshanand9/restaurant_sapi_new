@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="b0eb91a9-ab30-43fe-85c5-109b3464e928" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="H@anand2001" database="swiggy-restaurantdb" />
+	</db:config>
+	<db:config name="Database_Config1" doc:name="Database Config" doc:id="3b09d8ce-cb8b-4511-8055-75f3d25524db" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="H@anand2001" database="swiggy-restaurantdb" />
+	</db:config>
+	<flow name="insertRestaurantFlow" doc:id="9085ef48-6135-4372-990a-8249081d5fb9" >
+		<db:insert doc:name="Insert" doc:id="e7c4e72d-61b8-487e-a85c-5bd6d4b8031c" config-ref="Database_Config1">
+			<db:sql ><![CDATA[INSERT INTO `swiggy-restaurantdb`.`restaurant` (`name`, `house_number`, `street`, `city`, `pincode`) VALUES (:name, :house_number, :street, :city, :pin);]]></db:sql>
+			<db:input-parameters ><![CDATA[#[output application/java
+---
+{
+	name: payload.name as String,
+	pin: payload.address.pincode as String,
+	city: payload.address.city,
+	street: payload.address.street as String,
+	house_number: payload.address.houseNumber as String
+}]]]></db:input-parameters>
+		</db:insert>
+	</flow>
+</mule>

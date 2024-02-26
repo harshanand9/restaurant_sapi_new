@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="getRestaurantByIdFlow" doc:id="f7ad1568-865c-4a94-94e2-443812fa2602" >
+		<db:select doc:name="Select" doc:id="3c407b4a-3744-47ab-ba66-3baf9802bd8d" config-ref="Database_Config1">
+			<db:sql ><![CDATA[SELECT * FROM `swiggy-restaurantdb`.restaurant where restaurant_id = :id;]]></db:sql>
+			<db:input-parameters ><![CDATA[#[output application/java
+---
+{
+	id: vars.id	
+	}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="ff02ece7-67fd-4abd-86f8-64f03750c3f8" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var data = payload[0]
+---
+{
+	restaurantId: data.restaurant_id,
+	name: data.name,
+	address: {
+		pincode: data.pincode,
+		city: data.city,
+		street: data.street,
+		houseNumber: data.house_number
+	}
+	
+	
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
